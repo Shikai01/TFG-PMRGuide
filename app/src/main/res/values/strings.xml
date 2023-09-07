@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">GuiadoInteriores2.0</string>
+    <string name="ISC1">Nombre de Usuario</string>
+    <string name="ISC2">Contraseña</string>
+    <string name="ISC3">Correo Electronico</string>
+    <string name="ISC4">Repetir Contraseña</string>
+    <string name="ISB1">Log In</string>
+    <string name="ISB2">Sig In</string>
+    <string name="MVB1">Empezar Guiado</string>
+    <string name="MVB2">Administrar Edificios</string>
+    <string name="MVB3">Medir Pasos</string>
+    <string name="MVB4">Ayuda</string>
+    <string name="Back">Back</string>
+    <string name="PT1">
+        Pulse el Boton Comenzar cuando este listo, tardara unos segundos en consensus su posición, recuerde en estar en un espacio abierto
+    </string>
+    <string name="PT2">
+        De 100 pasos en linea recta y pulse el boton de Terminar
+    </string>
+    <string name="PT3">
+        Todo listo, espera unos segundos hasta que le enviemos al meno principal
+    </string>
+    <string name="Comenzar">Comenzar</string>
+    <string name="Terminar">Terminar</string>
+    <string name="Edificios">Edificios</string>
+    <string name="Descargar">Descarga</string>
+    <string name="MR">Movilidad Reducida</string>
+    <string name="DV">Discapacidad Visual</string>
+    <string name="Mapear">Mapear</string>
+    <string name="Descripcion1">Imagen de un movil</string>
+    <string name="nuevo">nuevo</string>
+    <string name="NombreEdificio">Nombre del Edificio</string>
+    <string name="Direccion">Direccion del Edificio</string>
+    <string name="Rellenar">Rellene los siguientes campos</string>
+    <string name="Agregar">Agregar</string>
+    <string name="X">X</string>
+    <string name="Edit">Editar</string>
+    <string name="Eliminar">Eliminar</string>
+    <string name="Salas">Salas</string>
+    <string name="Conexiones">Conexiones</string>
+    <string name="Instrucciones">Instrucciones</string>
+    <string name="NSala">Nombre de la sala</string>
+    <string name="SalaO">Nombre de la sala objetivo</string>
+    <string name="InstruccionesO">Inserte las instrucciones</string>
+    <string name="CoordenadaX">Coordenada X</string>
+    <string name="CoordenadaY">Coordenada Y</string>
+    <string name="BuscarE">Inserte el Edificio para empezar el guiado</string>
+</resources>
