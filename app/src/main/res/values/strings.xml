@@ -45,4 +45,10 @@
     <string name="CoordenadaX">Coordenada X</string>
     <string name="CoordenadaY">Coordenada Y</string>
     <string name="BuscarE">Inserte el Edificio para empezar el guiado</string>
+    <string name="Elegir">Seleccionar</string>
+    <string name="elegirSalas">Escribas las salas para comenzar el guiado</string>
+    <string name="SalaI">Sala origen</string>
+    <string name="SalaD">Sala destino</string>
+    <string name="Instructions">Instrucciones</string>
+    <string name="CaminosAlt">Generar otro camino</string>
 </resources>

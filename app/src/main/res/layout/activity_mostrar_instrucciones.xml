@@ -4,47 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapearSalas">
+    tools:context=".MostrarInstrucciones">
+
 
     <TextView
-        android:id="@+id/Edificios"
+        android:id="@+id/titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:inputType="none"
         android:text="@string/Instrucciones"
-        android:layout_marginTop="50sp"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-    <ScrollView
+    <TextView
+        android:id="@+id/instrucciones"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/agregar"
+        android:layout_height="0sp"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Edificios">
-
-        <LinearLayout
-            android:id="@+id/PasosContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/titulo" />
 
     <Button
-        android:id="@+id/agregar"
-        android:layout_width="200sp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="20sp"
-        android:text="@string/nuevo"
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50sp"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:text="@string/CaminosAlt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></Button>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

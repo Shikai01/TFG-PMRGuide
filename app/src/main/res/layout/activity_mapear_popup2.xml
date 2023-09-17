@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/blue">
 
     <Button
         android:id="@+id/salir"
@@ -22,6 +22,7 @@
         android:layout_marginTop="50sp"
         android:textSize="20sp"
         android:text="@string/Rellenar"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/salir"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -36,6 +37,7 @@
         android:textSize="15sp"
         android:autofillHints="building"
         android:inputType="text"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/titulo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -48,6 +50,7 @@
         android:textSize="15sp"
         android:autofillHints="direction"
         android:inputType="text"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/nombre"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -60,6 +63,7 @@
         android:textSize="15sp"
         android:autofillHints="direction"
         android:inputType="text"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/CoordenadaX"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

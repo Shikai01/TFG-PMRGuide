@@ -13,6 +13,7 @@
         android:textSize="30sp"
         android:autofillHints="emailAddress"
         android:inputType="textEmailAddress"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,6 +28,7 @@
         android:textSize="30sp"
         android:autofillHints="name"
         android:inputType="text"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/Rname"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -41,6 +43,7 @@
         android:inputType="textPassword"
         android:textSize="30sp"
         android:autofillHints="password"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -54,6 +57,7 @@
         android:textSize="30sp"
         android:autofillHints="password"
         android:inputType="textPassword"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

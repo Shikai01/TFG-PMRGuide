@@ -18,6 +18,9 @@
         tools:ignore="ExtraText"
         tools:targetApi="31">
         <activity
+            android:name=".MostrarInstrucciones"
+            android:exported="false" />
+        <activity
             android:name=".GuiadoPasos"
             android:exported="false" />
         <activity

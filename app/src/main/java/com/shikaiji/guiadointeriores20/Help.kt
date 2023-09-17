@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -22,8 +23,9 @@ class Help : AppCompatActivity() {
         val help = findViewById <AppCompatButton> (R.id.back)
         help.setOnClickListener { goBack() }
 
-        val textView = findViewById<TextView>(R.id.instructions)
-        textView.text = leerArchivo()
+        val webView = findViewById<WebView>(R.id.webview)
+
+        webView.loadUrl("file:///android_res/raw/instructions.html")
 
 
     }
@@ -34,23 +36,4 @@ class Help : AppCompatActivity() {
         startActivity(intent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun leerArchivo(): CharSequence? {
-        var text= ""
-        try{
-            val inputStream: InputStream = resources.openRawResource(R.raw.instructions)
-            val reader = BufferedReader(InputStreamReader(inputStream))
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                text += line + "\n"
-            }
-            reader.close()
-
-
-        }catch (ex:Exception){
-            Toast.makeText(this,"Alerta", Toast.LENGTH_SHORT).show()
-            text += ex
-        }
-        return text
-    }
 }

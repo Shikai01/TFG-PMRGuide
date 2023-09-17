@@ -1,6 +1,5 @@
 package com.shikaiji.guiadointeriores20
 
-import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

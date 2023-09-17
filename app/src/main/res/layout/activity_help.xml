@@ -7,30 +7,16 @@
     tools:context=".Help">
 
 
-    <ScrollView
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:context=".MainActivity">
-
-            <TextView
-                android:id="@+id/instructions"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:textSize="20sp"
-                android:padding="10dp"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
 
 
 
@@ -38,7 +24,6 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/purple_500"
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".MainActivity">
 

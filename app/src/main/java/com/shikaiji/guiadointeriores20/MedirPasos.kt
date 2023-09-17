@@ -197,7 +197,7 @@ class MedirPasos : AppCompatActivity() {
         circle.visibility = View.VISIBLE
 
         val handler = Handler()
-        val delayMillis: Long = 2000 // 2 segundos
+        val delayMillis: Long = 200 // 2 segundos
 
         handler.postDelayed({
             val texto = findViewById<TextView>(R.id.TextoGuia)
@@ -232,7 +232,7 @@ class MedirPasos : AppCompatActivity() {
 
         val intent= Intent(this, MainView::class.java)
         val handler = Handler()
-        val delayMillis: Long = 2000 // 2 segundos
+        val delayMillis: Long = 1000 // 1 segundos
 
         handler.postDelayed({
             val distancia = haversine(latitud, longitud, latA, lonA) * 10

@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 
 class IniciarSesion : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_iniciar_sesion2)
 

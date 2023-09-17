@@ -1,9 +1,17 @@
 package com.shikaiji.guiadointeriores20
+
+
+
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.io.Serializable
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log
+import kotlin.math.round
 
 
 class SQLite(
@@ -271,7 +279,8 @@ class SQLite(
     }
 
     //Dado los datos de un edificio, comprueba si esta ya en el sistema
-    private fun getRowIdForEdificio(usuario: String, edificio: String, calle: String): Long {
+    fun getRowIdForEdificio(usuario: String, edificio: String, calle: String): Long {
+
         var db= writableDatabase
         val cursor = db.query(
             "Edificios",
@@ -282,10 +291,11 @@ class SQLite(
             null,
             null
         )
-        val rowId = if (cursor.moveToFirst()) {
-            cursor.getLong(0)
-        } else {
-            -1
+        var rowId = -1L
+
+        if (cursor.moveToFirst()) {
+            rowId = cursor.getLong(0)
+            println(rowId)
         }
         cursor.close()
         return rowId
@@ -414,6 +424,409 @@ class SQLite(
         cursor.close()
         return pasos
     }
+
+    data class Edificio(
+        val idEdificio: Long,
+        val usuario: String,
+        val nombreE: String,
+        val calle: String
+    )
+
+    @SuppressLint("Range")
+    fun getEdificiosFiltrados(usuarioID: String): List<Edificio> {
+        val db = readableDatabase
+        val userCursor = db.query(
+            "Usuarios",
+            arrayOf("dc", "mr"),
+            "Usuario = ?",
+            arrayOf(usuarioID),
+            null,
+            null,
+            null
+        )
+
+        var dcValue = 0
+        var mrValue = 0
+
+        if (userCursor.moveToFirst()) {
+            dcValue = userCursor.getInt(userCursor.getColumnIndex("dc"))
+            mrValue = userCursor.getInt(userCursor.getColumnIndex("mr"))
+        }
+
+        userCursor.close()
+
+        val resultEdificios = mutableListOf<Edificio>()
+
+        val condition = if (dcValue == 1 && mrValue == 1) {
+            "" // Ambos campos marcados, no aplicamos ninguna condición
+        } else if (dcValue == 1) {
+            "dc = 1"
+        } else {
+            "mr = 1"
+        }
+
+        val query = """
+        SELECT Edificios.IDEdificio, Edificios.Usuario, Edificios.NombreE, Edificios.Calle
+        FROM Edificios
+        WHERE Edificios.Usuario IN (
+            SELECT Usuario
+            FROM Usuarios
+            WHERE $condition
+        )
+    """.trimIndent()
+
+        val conditionCursor = db.rawQuery(query, null)
+
+        while (conditionCursor.moveToNext()) {
+            val idEdificio = conditionCursor.getLong(conditionCursor.getColumnIndex("IDEdificio"))
+            val usuario = conditionCursor.getString(conditionCursor.getColumnIndex("Usuario"))
+            val nombreE = conditionCursor.getString(conditionCursor.getColumnIndex("NombreE"))
+            val calle = conditionCursor.getString(conditionCursor.getColumnIndex("Calle"))
+            resultEdificios.add(Edificio(idEdificio, usuario, nombreE, calle))
+        }
+
+        conditionCursor.close()
+
+        return resultEdificios.distinctBy { it.idEdificio } // Eliminar duplicados por IDEdificio
+    }
+
+    @SuppressLint("Range")
+    fun buscarIdSalaPorNombreYEdificio(nombreSala: String, idEdificio: Long): Long {
+
+        val db = readableDatabase
+        val selection = "nombreS = ? AND IDEdificio = ?"
+        val selectionArgs = arrayOf(nombreSala, idEdificio.toString())
+
+        val cursor = db.query(
+            "Salas",
+            arrayOf("IDSala"),
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+
+        var idSala: Long = -1 // Valor por defecto si no se encuentra ninguna coincidencia
+
+        if (cursor.moveToFirst()) {
+            idSala = cursor.getLong(cursor.getColumnIndex("IDSala"))
+        }
+
+        cursor.close()
+        return idSala
+    }
+
+    @SuppressLint("Range")
+    fun getSalasPorEdificio(idEdificio: Long): List<Int> {
+        val salasList = mutableListOf<Int>()
+        val db = readableDatabase
+        val query = """
+        SELECT *
+        FROM Salas
+        WHERE IDEdificio = ?
+    """.trimIndent()
+        val cursor = db.rawQuery(query, arrayOf(idEdificio.toString()))
+        while (cursor.moveToNext()) {
+            val idSala = cursor.getInt(cursor.getColumnIndex("IDSala"))
+
+            salasList.add(idSala)
+        }
+        cursor.close()
+        return salasList
+    }
+
+
+    @SuppressLint("Range")
+    fun getConexionesUnicas(Lista : List<Int>, salaO: String, salaD:String): List<Int> {
+        var no_limpio= true
+        var listaN= Lista.toMutableList()
+
+        //Elimina Salas con solo salidas o llegadas
+        while(no_limpio){
+            var salasDeSalida = mutableListOf<Int>()
+            var salasDeLlegada = mutableListOf<Int>()
+
+            val db = readableDatabase
+            // Crear una consulta para buscar conexiones donde IDSalaO o IDSalaD estén en la lista idSalas
+            val query = """
+            SELECT DISTINCT IDSalaO, IDSalaD
+            FROM Conexiones
+            WHERE IDSalaO IN (${listaN.joinToString()})
+               OR IDSalaD IN (${listaN.joinToString()})
+            """.trimIndent()
+
+            val cursor = db.rawQuery(query, null)
+
+            while (cursor.moveToNext()) {
+                val idSalaO = cursor.getInt(cursor.getColumnIndex("IDSalaO"))
+                val idSalaD = cursor.getInt(cursor.getColumnIndex("IDSalaD"))
+
+                if (listaN.contains(idSalaO)) {
+                    salasDeSalida.add(idSalaO)
+                    salasDeLlegada.add(idSalaD)
+                } else {
+                    salasDeSalida.add(idSalaD)
+                    salasDeLlegada.add(idSalaO)
+                }
+            }
+            cursor.close()
+
+            if((salaD.toInt() in salasDeLlegada) && (salaO.toInt() in salasDeSalida)){
+                salasDeSalida.add(salaD.toInt())
+                salasDeLlegada.add(salaO.toInt())
+            }else{
+                return emptyList()
+            }
+
+            val diferenciaL = salasDeLlegada.subtract(salasDeSalida.toList().distinct().toSet()).toMutableList()
+            val diferenciaS = salasDeSalida.subtract(salasDeLlegada.toList().distinct().toSet()).toMutableList()
+            if (diferenciaL.isNotEmpty() && diferenciaS.isNotEmpty()) {
+                listaN = listaN.filter { sala -> sala !in diferenciaL }.toMutableList()
+                listaN = listaN.filter { sala -> sala !in diferenciaS }.toMutableList()
+            }else{
+                no_limpio=false
+            }
+        }
+        return listaN
+    }
+
+
+    @SuppressLint("Range")
+    fun crearTablaConexiones(Lista : List<Int>): List<Conexion> {
+        val conexiones = mutableListOf<Conexion>()
+        val db = readableDatabase
+
+        // Crear una consulta para buscar conexiones donde IDSalaO o IDSalaD estén en la lista idSalas
+        val query = """
+        SELECT Conexiones.IDconexion, Conexiones.IDSalaO, Conexiones.IDSalaD, SalasD.CoordenadaX, SalasD.CoordenadaY
+        FROM Conexiones
+        INNER JOIN Salas AS SalasD ON Conexiones.IDSalaD = SalasD.IDSala
+        WHERE Conexiones.IDSalaO IN (${Lista.joinToString()})
+           OR Conexiones.IDSalaD IN (${Lista.joinToString()})
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, null)
+
+        while (cursor.moveToNext()) {
+            val idConexion = cursor.getInt(cursor.getColumnIndex("IDconexion"))
+            val idSalaO = cursor.getInt(cursor.getColumnIndex("IDSalaO"))
+            val idSalaD = cursor.getInt(cursor.getColumnIndex("IDSalaD"))
+            val coordenadaX = cursor.getInt(cursor.getColumnIndex("CoordenadaX"))
+            val coordenadaY = cursor.getInt(cursor.getColumnIndex("CoordenadaY"))
+
+            val conexion = Conexion(idConexion, idSalaO, idSalaD, coordenadaX, coordenadaY)
+            conexiones.add(conexion)
+        }
+        cursor.close()
+        return conexiones
+    }
+
+    fun contarConexiones(idsSalas: List<Int>, conexiones: List<Conexion>): Pair<List<Pair<Int, Int>>, Int> {
+        val conteoSalas = mutableMapOf<Int, Int>()
+        var salasCon3oMasConexiones = 0
+
+        for (conexion in conexiones) {
+            val salaO = conexion.salaO
+            // Actualiza el conteo de salas
+            conteoSalas[salaO] = (conteoSalas[salaO] ?: 0) + 1
+
+            // Verifica si la sala tiene 3 o más conexiones
+            if (conteoSalas[salaO] == 3) {
+                salasCon3oMasConexiones++
+            }
+        }
+        // Crea una lista de pares (ID de sala, número de conexiones)
+        val resultados = idsSalas.map { idSala ->
+            Pair(idSala, conteoSalas[idSala] ?: 0)
+        }
+
+        return Pair(resultados, ceil(salasCon3oMasConexiones.toDouble()/3).toInt())
+    }
+
+    private fun buscarCamino(salaO: Int, salaD: Int, conexiones: List<Conexion>, contador:Int, lista_conexiones:List<Pair<Int, Int>>) : List<Int>{
+
+        val conexionSalaD = conexiones.find { it.salaD == salaD }
+        val coordenadaXsalaD = conexionSalaD?.coordenadaX
+        val coordenadaYsalaD = conexionSalaD?.coordenadaY
+        var nuevoContador=contador
+        var conexionesNuevo= conexiones
+        var lista = emptyList<Int>()
+        var idConexion= 0
+
+        val conexionesSalaO = conexiones.filter { it.salaO == salaO }
+
+        println("salaO")
+        println(salaO)
+        println("salaD")
+        println(salaD)
+        println("Conexiones")
+        println(conexiones)
+
+
+        while(lista.isEmpty()){
+            val conexionCercana = conexionesSalaO.minByOrNull { nuevas_Conexiones ->
+                val diferenciaX = abs(nuevas_Conexiones.coordenadaX - coordenadaXsalaD!!)
+                val diferenciaY = abs(nuevas_Conexiones.coordenadaY - coordenadaYsalaD!!)
+                diferenciaX + diferenciaY
+            }
+
+
+            if (conexionCercana != null) {
+                idConexion= conexionCercana.idConexion
+                if(conexionCercana.salaD==salaD){
+                    return listOf(idConexion)
+                }else{
+                    val conexionEncontrada = lista_conexiones.find { par ->
+                        par.first == conexionCercana?.salaD
+                    }
+
+                    if(conexionEncontrada?.second ?:1 >=3){
+                        nuevoContador=contador-1
+                    }else{
+                        if(contador<0){
+
+                            return lista
+                        }
+                    }
+                    conexionesNuevo = conexionesNuevo.filter { conexion -> conexion.idConexion != conexionCercana.idConexion }
+                    conexionesNuevo = conexionesNuevo.filter { conexion -> conexion.salaO != salaD || conexion.salaD != salaO }
+
+                    lista = buscarCamino(conexionCercana.salaD,salaD,conexionesNuevo, nuevoContador, lista_conexiones)
+                }
+            }else{
+                println("NO hay conexiones cercanas RETORNAMOS")
+                println(lista)
+                return lista
+            }
+        }
+        println("Encontramos camino, retornamos")
+        println(lista)
+        return listOf(idConexion) + lista
+    }
+
+    @SuppressLint("Range")
+    fun conseguirInstrucciones(camino: List<Int>): String {
+        val db = readableDatabase
+        val instrucciones = mutableListOf<String>()
+
+        for (conexionId in camino) {
+            val cursor = db.query(
+                "pasos",
+                arrayOf("Instruccion"),
+                "IDconexion = ?",
+                arrayOf(conexionId.toString()),
+                null,
+                null,
+                "orden"
+            )
+
+            while (cursor.moveToNext()) {
+                val instruccion = cursor.getString(cursor.getColumnIndex("Instruccion"))
+                instrucciones.add(instruccion)
+            }
+
+            cursor.close()
+
+            val nombreSalaD = obtenerNombreSalaD(conexionId.toString())
+
+            instrucciones.add("Has alcanzado la sala $nombreSalaD")
+        }
+
+        return instrucciones.joinToString("\n") // Devolver las instrucciones como un solo String separado por saltos de línea
+    }
+
+
+    @SuppressLint("Range")
+    private fun obtenerNombreSalaD(conexionId: String): String {
+        var IdSala= 0
+        val db = readableDatabase
+        val cursor = db.query(
+            "Conexiones",
+            arrayOf("IDSalaD"),
+            "IDConexion = ?",
+            arrayOf(conexionId),
+            null,
+            null,
+            null
+        )
+
+        IdSala =if (cursor.moveToFirst()) {
+            cursor.getString(cursor.getColumnIndex("IDSalaD")).toInt()
+        } else {
+            1
+        }
+        cursor.close()
+
+
+        val cursor2 = db.query(
+            "Salas",
+            arrayOf("NombreS"),
+            "IDSala = ?",
+            arrayOf(IdSala.toString()),
+            null,
+            null,
+            null
+        )
+
+        if (cursor2.moveToFirst()) {
+            return cursor2.getString(cursor2.getColumnIndex("NombreS"))
+        } else {
+            return ""
+        }
+
+
+    }
+
+
+    fun generarCamino(idEdificio: String, salaO: String, salaD:String): DataCamino {
+        var listaSalas =  getSalasPorEdificio(idEdificio.toLong())
+
+        listaSalas = getConexionesUnicas(listaSalas, salaO, salaD)
+
+        if(listaSalas.isEmpty()){
+            return DataCamino(
+                salaO,
+                salaD,
+                "No se encontro ningun camino",
+                emptyList(), // Lista de conexiones vacía
+                emptyList(), // Lista de conexiones vacía
+                0, // Valor de caminoMax por defecto
+                0
+            )
+        }
+        var conexiones: List<Conexion>  = crearTablaConexiones(listaSalas)
+        var contador = contarConexiones(listaSalas,conexiones)
+        var listaConexiones= contador.first
+        var caminoMax= contador.second
+        var camino = buscarCamino(salaO.toInt(),salaD.toInt(),conexiones,caminoMax,listaConexiones)
+        return if(camino.isNotEmpty()){
+            DataCamino (salaO,salaD,conseguirInstrucciones(camino),conexiones,listaConexiones,caminoMax, camino.first())
+        }else{
+            DataCamino (salaO,salaD,"No existe un camino entre estas dos salas",conexiones,listaConexiones,caminoMax, 0)
+        }
+
+    }
+
+    fun nuevoCamino(camino: DataCamino): DataCamino{
+
+        camino.conexiones= camino.conexiones.filter { conexion ->
+            conexion.idConexion != camino.eliminar
+        }
+
+        println("Entrando a buscador")
+        var caminoN = buscarCamino(camino.salaO.toInt(),camino.salaD.toInt(),camino.conexiones,camino.caminoMax, camino.ListaConexiones)
+
+        return if(caminoN.isEmpty()){
+            DataCamino (camino.salaO,camino.salaD,"No existe un camino entre estas dos salas",camino.conexiones,camino.ListaConexiones,camino.caminoMax, 0)
+        }else{
+            DataCamino (camino.salaO,camino.salaD,conseguirInstrucciones(caminoN),camino.conexiones,camino.ListaConexiones,camino.caminoMax, caminoN.first())
+        }
+
+
+    }
+
+
 
 
 
