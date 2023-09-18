@@ -733,7 +733,7 @@ class SQLite(
             instrucciones.add("Has alcanzado la sala $nombreSalaD")
         }
 
-        return instrucciones.joinToString("\n") // Devolver las instrucciones como un solo String separado por saltos de línea
+        return instrucciones.joinToString("\n 3 pasos \t") // Devolver las instrucciones como un solo String separado por saltos de línea
     }
 
 

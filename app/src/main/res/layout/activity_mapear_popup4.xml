@@ -29,18 +29,31 @@
     </TextView>
 
     <EditText
-        android:id="@+id/Instrucciones"
-        android:layout_width="match_parent"
+        android:id="@+id/pasos"
+        android:layout_width="50dp"
         android:layout_height="200dp"
-        android:hint="@string/InstruccionesO"
+        android:hint="@string/IntPasos"
         android:textAlignment="center"
         android:textSize="15sp"
         android:autofillHints="building"
         android:inputType="text"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/titulo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/Instrucciones"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:autofillHints="building"
+        android:hint="@string/InstruccionesO"
+        android:inputType="textMultiLine"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pasos"
+        app:layout_constraintTop_toBottomOf="@id/titulo" />
 
     <Button
         android:id="@+id/agregar"

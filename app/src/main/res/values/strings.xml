@@ -51,4 +51,5 @@
     <string name="SalaD">Sala destino</string>
     <string name="Instructions">Instrucciones</string>
     <string name="CaminosAlt">Generar otro camino</string>
+    <string name="IntPasos">Pasos</string>
 </resources>

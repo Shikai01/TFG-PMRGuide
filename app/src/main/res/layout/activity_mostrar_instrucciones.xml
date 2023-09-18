@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:textSize="20sp"
+        android:layout_marginLeft="30sp"
         app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
